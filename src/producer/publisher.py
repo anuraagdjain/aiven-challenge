@@ -1,8 +1,9 @@
 from kafka import KafkaProducer
 from cloudevents.http import CloudEvent, to_json
 
+
 class MessagePublisher:
-    def __init__(self, config = dict()):
+    def __init__(self, config=dict()):
         host = config.get('host')
         port = config.get('port')
         self.kafka_producer = KafkaProducer(
@@ -16,15 +17,15 @@ class MessagePublisher:
     def cloudevents_string(self, value):
         attributes = {
             "type": "com.localhost.healthcheck",
-            "source":"healthchecker"
+            "source": "healthchecker"
         }
         cloudEvent = CloudEvent(attributes, value)
         return to_json(cloudEvent)
-    
+
     def send(self, topic, payload):
         sanitized_payload = self.cloudevents_string(payload)
         self.kafka_producer.send(topic, sanitized_payload)
         self.kafka_producer.flush()
-    
+
     def terminate(self):
         self.kafka_producer.close()
