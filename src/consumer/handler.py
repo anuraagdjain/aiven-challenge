@@ -6,14 +6,14 @@ class MessageHandler:
         self.db = db
 
     def is_valid(self, payload: CloudEvent) -> bool:
-        if not (["url","time_in_ms","http_status_code"] == list(payload.data.keys())):
+        if not (set(["url","time_in_ms","http_status_code"]).issubset(list(payload.data.keys()))):
             logging.debug('[MessageHandler.is_valid] Received data is invalid - {}'.format(payload.data.keys()))
             return False
-       
+        
         if not ("time" in payload):
             logging.debug('[MessageHandler.is_valid] Missing time in cloudevents obj - {}'.format(payload))
             return False
-       
+        
         if not (
                 isinstance(payload.data["url"], str) 
                 and isinstance(payload.data["time_in_ms"], (int, float))
@@ -29,7 +29,6 @@ class MessageHandler:
     
     def handle(self, message):
         payload = from_json(message)
-
         if not self.is_valid(payload):
             raise ValueError("Received payload is invalid", message)
         
