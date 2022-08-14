@@ -3,3 +3,9 @@ start-db:
 
 run-migrations:
 	@docker run --rm --platform linux/amd64 -v "/$$(pwd)/flyway/sql:/flyway/sql" -v "/$$(pwd)/flyway/conf:/flyway/conf" flyway/flyway:9.0-alpine -url="jdbc:postgresql://docker.for.mac.host.internal:5432/postgres" -user=root -password=1234 migrate	
+
+start-consumer:
+	@python3 src/consumer/main.py
+
+start-producer:
+	@python3 src/producer/main.py		
