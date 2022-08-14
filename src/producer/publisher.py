@@ -25,3 +25,6 @@ class MessagePublisher:
         sanitized_payload = self.cloudevents_string(payload)
         self.kafka_producer.send(topic, sanitized_payload)
         self.kafka_producer.flush()
+    
+    def terminate(self):
+        self.kafka_producer.close()
