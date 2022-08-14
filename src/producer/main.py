@@ -28,10 +28,11 @@ def main():
     
     try:
         timer.start()
-    except KeyboardInterrupt  as err:
+    except KeyboardInterrupt:
+        logging.info('[Producer.main] Teardown started')
         timer.cancel()
-        logging.error('[Producer.main] program execution halted - {}'.format(err))
-
+        producer.terminate()
+        logging.info('[Producer.main] Teardown completed')
 
 if __name__ == "__main__":
     main()
