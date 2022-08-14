@@ -50,6 +50,8 @@ def main():
     
             messageHandler.handle(message.value)
     
+    except ValueError as err:
+        logging.warn("[Consumer.main] Failed processing message ", err)
     except KeyboardInterrupt:
         logging.info('[Consumer.main] Teardown started')
         
@@ -57,6 +59,8 @@ def main():
         consumer.close()
         
         logging.info('[Consumer.main] Teardown completed')
+    except Exception as err:
+        logging.warn('[Consumer.main] Unexepected error occurred', err)
 
 if __name__ == "__main__":
     main()
