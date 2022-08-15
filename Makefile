@@ -12,3 +12,6 @@ start-producer:
 
 run-tests:
 	@python3 -m pytest tests/**/*.py
+
+lint-fix:
+	@python3 -m autopep8 --in-place --aggressive --aggressive src/**/**.py	

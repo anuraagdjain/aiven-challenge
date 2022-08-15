@@ -12,9 +12,9 @@ logging.basicConfig(level=logging.INFO)
 cur_path = os.path.dirname(__file__)
 
 kafka_config = dict()
-kafka_config["cafile"] = os.path.join(cur_path,'../certs/ca.pem')
-kafka_config["certfile"] = os.path.join(cur_path,'../certs/service.cert')
-kafka_config["keyfile"] = os.path.join(cur_path,'../certs/service.key')
+kafka_config["cafile"] = os.path.join(cur_path, '../certs/ca.pem')
+kafka_config["certfile"] = os.path.join(cur_path, '../certs/service.cert')
+kafka_config["keyfile"] = os.path.join(cur_path, '../certs/service.key')
 kafka_config["host"] = os.getenv('KAFKA_HOST')
 kafka_config["port"] = os.getenv('KAFKA_PORT')
 
@@ -31,38 +31,39 @@ def main():
     try:
 
         consumer = KafkaConsumer(
-            bootstrap_servers='{}:{}'.format(kafka_config["host"], kafka_config["port"]),
+            bootstrap_servers='{}:{}'.format(
+                kafka_config["host"],
+                kafka_config["port"]),
             security_protocol="SSL",
             ssl_cafile=kafka_config["cafile"],
             ssl_certfile=kafka_config["certfile"],
             ssl_keyfile=kafka_config["keyfile"],
-            auto_offset_reset='earliest'
-        )
+            auto_offset_reset='earliest')
 
         consumer.subscribe('services-web-health')
 
         db = DatabaseSource(db_config)
         messageHandler = MessageHandler(db)
-        
+
         for message in consumer:
-    
-            logging.info('[main] Incoming message for topic - {}'.format(message.topic))
-    
+
+            logging.info(
+                '[main] Incoming message for topic - {}'.format(message.topic))
+
             messageHandler.handle(message.value)
-    
+
     except ValueError as err:
         logging.warning("[Consumer.main] Failed processing message ", err)
     except KeyboardInterrupt:
         logging.info('[Consumer.main] Teardown started')
-        
+
         db.terminate()
         consumer.close()
-        
+
         logging.info('[Consumer.main] Teardown completed')
     except Exception as err:
         logging.warning('[Consumer.main] Unexepected error occurred', err)
 
+
 if __name__ == "__main__":
     main()
-    
-
